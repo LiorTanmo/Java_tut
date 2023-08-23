@@ -15,7 +15,7 @@ import ru.lior.tutorial.util.PersonValidator;
 
 import java.util.List;
 
-//TODO
+//TODO ПЕРЕПИСАТЬ ИСПОЛЬЗУЯ JPA
 @Controller
 @RequestMapping("/people")
 public class PeopleController {

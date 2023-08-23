@@ -1,23 +1,44 @@
 package ru.lior.tutorial.models;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import java.util.List;
 
+
+@Entity
+@Table
 public class Person {
-    private int person_id;
-    @NotEmpty(message = "Имя не может быть пустым")
-    @Size(min = 2, max = 100,message = "Имя должно быть 2-100 символов")
+
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column
+    @NotEmpty(message = "Name should not be empty")
+    @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
     private String name;
 
+    @Column
     @Min(value = 1900, message = "Введите действительный год рождения")
     private int year;
 
-    public int getPerson_id() {
-        return person_id;
+    @OneToMany(mappedBy = "owner")
+    private List<Book> books;
+
+    public Person() {
+    }
+    public Person(String name, int year) {
+        this.name = name;
+        this.year = year;
     }
 
-    public void setPerson_id(int id) {
-        this.person_id = id;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -36,12 +57,4 @@ public class Person {
         this.year = year;
     }
 
-    public Person() {
-    }
-
-    public Person(int person_id, String name, int year) {
-        this.person_id = person_id;
-        this.name = name;
-        this.year = year;
-    }
 }

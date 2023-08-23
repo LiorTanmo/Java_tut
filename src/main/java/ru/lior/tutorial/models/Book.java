@@ -1,21 +1,37 @@
 package ru.lior.tutorial.models;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+@Entity
+@Table
 public class Book {
-    private int book_id;
+    @Id
+    @Column(name = "book_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column
     @NotEmpty(message = "Имя не может быть пустым")
     @Size(min = 2,max = 100,message = "Название должно быть 2-100 символов")
     private String name;
 
+    @Column
     @NotEmpty(message = "Автор не может быть пустым")
     @Size(min = 2,max = 100,message = "Имя автора должно быть 2-100 символов")
     private String author;
 
+    @Column
     @Min(value = 0, message = "Год должен быть положительным")
     private int year;
+    @ManyToOne
+    @JoinColumn(name = "person_id", referencedColumnName = "person_id")
+    private Person owner;
+
+    @Transient
+    private boolean isOverdue;
 
     public Book (String name, String author, int year) {
         this.name = name;
@@ -25,14 +41,14 @@ public class Book {
 
     public Book(){}
 
-    public int getBook_id() {
-        return book_id;
+    public int getId() {
+        return id;
     }
 
 
 
-    public void setBook_id(int book_id) {
-        this.book_id = book_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -57,5 +73,13 @@ public class Book {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public boolean isOverdue() {
+        return isOverdue;
+    }
+
+    public void setOverdue(boolean overdue) {
+        isOverdue = overdue;
     }
 }

@@ -12,8 +12,7 @@ import ru.lior.tutorial.dao.PersonDAO;
 import ru.lior.tutorial.models.Book;
 import ru.lior.tutorial.models.Person;
 
-
-//TODO
+//TODO rewrite using JPA methods
 @Controller
 @RequestMapping("/books")
 public class BooksController {
