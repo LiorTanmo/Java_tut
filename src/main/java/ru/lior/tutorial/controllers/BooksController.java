@@ -11,9 +11,6 @@ import ru.lior.tutorial.models.Book;
 import ru.lior.tutorial.models.Person;
 import ru.lior.tutorial.services.BooksService;
 import ru.lior.tutorial.services.PeopleService;
-import ru.lior.tutorial.util.PersonValidator;
-
-import java.util.Date;
 import java.util.Optional;
 
 @Controller
@@ -30,17 +27,25 @@ public class BooksController {
         this.peopleService = peopleService;
     }
 
-
     @GetMapping()
-    public String index(Model model){
-        model.addAttribute("books", booksService.findAll());
+    public String index(Model model, @RequestParam(required = false) Integer books_per_page,
+                        @RequestParam(required = false) Integer page,
+                        @RequestParam(required = false) boolean sortByYear){
+        if (page != null && books_per_page != null)
+             model.addAttribute("books", booksService.findAll(books_per_page, page, sortByYear));
+        else model.addAttribute("books", booksService.findAll(sortByYear));
         return "books/index";
     }
 
 
-    //TODO
     @GetMapping("/search")
-    public String Search(Model model){
+    public String search(){
+        return "books/search";
+    }
+
+    @PostMapping("/search")
+    public String search(Model model, @RequestParam(required = false) String input){
+        model.addAttribute("books", booksService.search(input));
         return "books/search";
     }
 

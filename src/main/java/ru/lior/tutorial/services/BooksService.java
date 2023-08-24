@@ -1,6 +1,8 @@
 package ru.lior.tutorial.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.lior.tutorial.models.Book;
@@ -22,8 +24,14 @@ public class BooksService {
         this.booksRepository = booksRepository;
     }
 
-    public List<Book> findAll() {
-        return booksRepository.findAll();
+    public List<Book> findAll(boolean sortByYear) {
+        return sortByYear ? booksRepository.findAll(Sort.by("year"))
+                :booksRepository.findAll() ;
+    }
+
+    public List<Book> findAll(int booksPerPage, int page ,boolean sortByYear){
+        return sortByYear ? booksRepository.findAll(PageRequest.of(page, booksPerPage, Sort.by("year"))).getContent()
+                : booksRepository.findAll(PageRequest.of(page, booksPerPage)).getContent();
     }
 
     public Book findOne(int id) {
@@ -31,7 +39,7 @@ public class BooksService {
         return foundBook.orElse(null);
     }
 
-    public Optional<Book> search(String search){
+    public List<Book> search(String search){
         return booksRepository.findByNameStartingWith(search);
     }
 

@@ -7,7 +7,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.lior.tutorial.models.Person;
-import ru.lior.tutorial.services.BooksService;
 import ru.lior.tutorial.services.PeopleService;
 import ru.lior.tutorial.util.PersonValidator;
 
@@ -16,19 +15,16 @@ import ru.lior.tutorial.util.PersonValidator;
 public class PeopleController {
 
     private final PeopleService peopleService;
-    private final BooksService booksService;
 
     private final PersonValidator personValidator;
 
     @Autowired
-    public PeopleController(PeopleService peopleService, BooksService booksService, PersonValidator personValidator) {
+    public PeopleController(PeopleService peopleService, PersonValidator personValidator) {
         this.peopleService = peopleService;
-        this.booksService = booksService;
         this.personValidator = personValidator;
     }
 
 
-    //TODO add pagination & sorting
     @GetMapping()
     public String index(Model model) {
         model.addAttribute("people", peopleService.findAll());
