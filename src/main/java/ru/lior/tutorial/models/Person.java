@@ -13,7 +13,7 @@ public class Person {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int person_id;
     @Column
     @NotEmpty(message = "Name should not be empty")
     @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
@@ -33,12 +33,12 @@ public class Person {
         this.year = year;
     }
 
-    public int getId() {
-        return id;
+    public int getPerson_id() {
+        return person_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setPerson_id(int id) {
+        this.person_id = id;
     }
 
     public String getName() {
@@ -57,4 +57,11 @@ public class Person {
         this.year = year;
     }
 
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
+    }
 }

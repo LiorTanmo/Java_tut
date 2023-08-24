@@ -5,8 +5,10 @@ import org.springframework.stereotype.Repository;
 import ru.lior.tutorial.models.Person;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PeopleRepository extends JpaRepository<Person, Integer> {
-    List<Person> findByName (String name);
+    Optional<Person> findByName (String name);
+
 }

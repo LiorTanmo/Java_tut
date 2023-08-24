@@ -7,36 +7,50 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.lior.tutorial.dao.BookDAO;
-import ru.lior.tutorial.dao.PersonDAO;
 import ru.lior.tutorial.models.Book;
 import ru.lior.tutorial.models.Person;
+import ru.lior.tutorial.services.BooksService;
+import ru.lior.tutorial.services.PeopleService;
+import ru.lior.tutorial.util.PersonValidator;
 
-//TODO rewrite using JPA methods
+import java.util.Date;
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/books")
 public class BooksController {
-    private final BookDAO dao;
-    private final PersonDAO personDAO;
+
+    private final BooksService booksService;
+    private final PeopleService peopleService;
+
+
     @Autowired
-    public BooksController(BookDAO bookDAO, PersonDAO personDAO) {
-        this.dao = bookDAO;
-        this.personDAO = personDAO;
+    public BooksController(BooksService booksService, PeopleService peopleService) {
+        this.booksService = booksService;
+        this.peopleService = peopleService;
     }
+
 
     @GetMapping()
     public String index(Model model){
-        model.addAttribute("books", dao.index());
+        model.addAttribute("books", booksService.findAll());
         return "books/index";
+    }
+
+
+    //TODO
+    @GetMapping("/search")
+    public String Search(Model model){
+        return "books/search";
     }
 
     @GetMapping("/{id}")
     public String show(Model model, @ModelAttribute("person") Person person, @PathVariable("id") int id){
-        model.addAttribute("book", dao.show(id));
-        if(dao.getOwner(id).isPresent()){
-            model.addAttribute("owner", dao.getOwner(id).get());
+        model.addAttribute("book", booksService.findOne(id));
+        if(booksService.findOne(id).getOwner() != null){
+            model.addAttribute("owner", booksService.getOwner(id));
         } else {
-          model.addAttribute("people", personDAO.index());
+          model.addAttribute("people", peopleService.findAll());
         }
         return "books/show";
     }
@@ -51,13 +65,13 @@ public class BooksController {
         if(bindingResult.hasErrors()){
             return "books/new";
         }
-        dao.save(book);
+        booksService.save(book);
         return "redirect:/books";
     }
 
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id){
-        model.addAttribute("book", dao.show(id));
+        model.addAttribute("book", booksService.findOne(id));
         return "books/edit";
     }
 
@@ -66,25 +80,25 @@ public class BooksController {
                           @PathVariable("id") int id){
         if(bindingResult.hasErrors())
             return "books/edit";
-        dao.update(id, book);
+        booksService.update(id, book);
         return "redirect:/books";
     }
 
     @PatchMapping("/{id}/assign")
     public String assign (@ModelAttribute("person") Person person, @PathVariable("id") int book_id){
-        dao.assignBook(person.getPerson_id(), book_id);
+        booksService.setOwner(book_id, Optional.ofNullable(person));
         return "redirect:/books/{id}";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id){
-        dao.delete(id);
+        booksService.delete(id);
         return "redirect:/books";
     }
 
     @DeleteMapping("/{id}/assign")
     public String removeOwner(@PathVariable("id") int book_id){
-        dao.assignBook(null, book_id);
+        booksService.setOwner(book_id, Optional.empty());
         return "redirect:/books/{id}";
     }
 }

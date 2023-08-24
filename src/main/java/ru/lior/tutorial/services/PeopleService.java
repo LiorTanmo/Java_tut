@@ -1,11 +1,14 @@
 package ru.lior.tutorial.services;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.lior.tutorial.models.Book;
 import ru.lior.tutorial.models.Person;
 import ru.lior.tutorial.repositories.PeopleRepository;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -37,8 +40,27 @@ public class PeopleService {
 
     @Transactional
     public void update(int id, Person updatedPerson) {
-        updatedPerson.setId(id);
+        updatedPerson.setPerson_id(id);
         peopleRepository.save(updatedPerson);
+    }
+
+    public List<Book> getBooksByOwner(int id){
+        Optional<Person> person = peopleRepository.findById(id);
+
+        if (person.isPresent()){
+            Hibernate.initialize(person.get().getBooks());
+
+            person.get().getBooks().forEach(book -> {
+                if (new Date().getTime() - book.getTakenAt().getTime() > 864000000){
+                    book.setOverdue(true);
+                }
+            });
+            return person.get().getBooks();
+        } else return Collections.emptyList();
+    }
+
+    public Optional<Person> findByName(String name){
+        return peopleRepository.findByName(name);
     }
     @Transactional
     public void delete(int id) {

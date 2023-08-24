@@ -8,14 +8,15 @@
 <body>
 <p th:text="'ФИО: ' + ${person.getName()}">name</p>
 <p th:text="'Год рождения: ' + ${person.getYear()}">year</p>
-<div th:if="${personalBooks.isEmpty()}">
+<div th:if="${books.isEmpty()}">
     <p >Человек пока не взял ни одной книги</p>
 </div>
-<div th:unless="${personalBooks.isEmpty()}">
+<div th:unless="${books.isEmpty()}">
     <br/>
     <b>Книги:</b>
-    <div th:each="book : ${personalBooks}">
-        <p th:text="${book.getName()} + ', ' + ${book.getAuthor()} + ', ' + ${book.getYear()}">book</p>
+    <div th:each="book : ${books}">
+        <p th:style="${book.isOverdue() ? 'color:red' : 'color:black'}"
+           th:text="${book.getName()} + ', ' + ${book.getAuthor()} + ', ' + ${book.getYear()}">book</p>
     </div>
 </div>
 <a th:href="@{/people/{id}/edit(id=${person.getPerson_id()})}">Редактировать профиль</a>
